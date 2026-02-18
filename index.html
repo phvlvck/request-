@@ -3,24 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معرض الصور - التخزين المحلي</title>
+    <title>معرض الصور - نظام حسابات خاصة</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #2b5876, #4e4376);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .container { padding-top: 20px; padding-bottom: 30px; }
+        
+        /* شاشة تسجيل الدخول */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header i {
+            font-size: 60px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .auth-header h2 {
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            color: #666;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            z-index: 1;
+        }
+        
+        .form-control {
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-auth {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* التطبيق الرئيسي */
+        .main-app {
+            display: none;
+        }
+        
         .navbar {
             background: rgba(255,255,255,0.95);
             border-radius: 0 0 20px 20px;
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
         }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .user-info {
+            text-align: left;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .user-email {
+            font-size: 12px;
+            color: #666;
+        }
+        
         .upload-area {
             background: rgba(255,255,255,0.9);
-            border: 3px dashed #fff;
+            border: 3px dashed #667eea;
             border-radius: 20px;
             padding: 40px;
             text-align: center;
@@ -28,10 +200,13 @@
             cursor: pointer;
             transition: 0.3s;
         }
+        
         .upload-area:hover {
-            background: rgba(255,255,255,1);
+            background: white;
             transform: scale(1.02);
+            border-color: #764ba2;
         }
+        
         .gallery-card {
             background: white;
             border-radius: 15px;
@@ -40,18 +215,27 @@
             margin-bottom: 20px;
             height: 250px;
             position: relative;
+            transition: 0.3s;
         }
+        
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
         .gallery-card img {
             width: 100%;
             height: 180px;
             object-fit: cover;
         }
+        
         .card-footer {
             padding: 10px;
             text-align: center;
             background: white;
             border-top: 1px solid #eee;
         }
+        
         .delete-btn {
             position: absolute;
             top: 10px;
@@ -64,12 +248,15 @@
             color: #dc3545;
             display: none;
             cursor: pointer;
+            z-index: 10;
         }
+        
         .gallery-card:hover .delete-btn {
             display: flex;
             align-items: center;
             justify-content: center;
         }
+        
         .folder-title {
             color: white;
             font-size: 1.5rem;
@@ -77,48 +264,201 @@
             padding-bottom: 10px;
             border-bottom: 3px solid rgba(255,255,255,0.3);
         }
+        
         .stats {
             background: rgba(255,255,255,0.2);
             padding: 5px 15px;
             border-radius: 50px;
             color: white;
         }
+        
+        .empty-state {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        /* رسائل التنبيه */
+        .alert-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            min-width: 300px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .alert-success { background: linear-gradient(135deg, #28a745, #20c997); }
+        .alert-error { background: linear-gradient(135deg, #dc3545, #c82333); }
+        .alert-info { background: linear-gradient(135deg, #17a2b8, #138496); }
+        
+        .btn-logout {
+            background: none;
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #dc3545;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-images me-2" style="color: #2b5876;"></i>
-                ألبوم الصور المحلي
-            </a>
-            <div class="d-flex align-items-center">
-                <span class="stats me-3" id="photoCount">0 صورة</span>
-                <button class="btn btn-outline-danger" onclick="clearAllPhotos()">
-                    <i class="fas fa-trash-alt"></i> مسح الكل
-                </button>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="authContainer" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-images"></i>
+                <h2>معرض الصور الخاص</h2>
+                <p class="text-muted">سجل الدخول للوصول إلى صورك الخاصة</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchTab('login')" id="loginTab">تسجيل الدخول</div>
+                <div class="auth-tab" onclick="switchTab('register')" id="registerTab">إنشاء حساب</div>
+            </div>
+            
+            <!-- نموذج تسجيل الدخول -->
+            <div id="loginForm" class="auth-form active">
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" class="form-control" id="loginEmail" required placeholder="أدخل بريدك الإلكتروني">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="loginPassword" required placeholder="أدخل كلمة المرور">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-auth">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        تسجيل الدخول
+                    </button>
+                </form>
+            </div>
+            
+            <!-- نموذج إنشاء حساب -->
+            <div id="registerForm" class="auth-form">
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" class="form-control" id="registerName" required placeholder="أدخل اسمك الكامل">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" class="form-control" id="registerEmail" required placeholder="أدخل بريدك الإلكتروني">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="registerPassword" required placeholder="أدخل كلمة المرور">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" class="form-control" id="confirmPassword" required placeholder="أعد إدخال كلمة المرور">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-auth">
+                        <i class="fas fa-user-plus me-2"></i>
+                        إنشاء حساب
+                    </button>
+                </form>
             </div>
         </div>
-    </nav>
+    </div>
+    
+    <!-- التطبيق الرئيسي -->
+    <div id="mainApp" class="main-app">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-images me-2" style="color: #667eea;"></i>
+                    معرض الصور الخاص
+                </a>
+                
+                <div class="user-menu">
+                    <span class="stats me-3" id="photoCount">0 صورة</span>
+                    
+                    <div class="user-info">
+                        <div class="user-name" id="displayName"></div>
+                        <div class="user-email" id="displayEmail"></div>
+                    </div>
+                    
+                    <div class="user-avatar" id="userAvatar"></div>
+                    
+                    <button class="btn btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
 
-    <div class="container" style="margin-top: 80px;">
-        <!-- Upload Area -->
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <i class="fas fa-cloud-upload-alt fa-3x" style="color: #2b5876;"></i>
-            <h4 class="mt-3">اضغط هنا لاختيار الصور</h4>
-            <p class="text-muted">أو اسحب وأفلت الصور هنا</p>
-            <input type="file" id="fileInput" multiple accept="image/*" style="display: none;" onchange="handleFiles(this.files)">
-        </div>
+        <div class="container" style="margin-top: 100px;">
+            <!-- Upload Area -->
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt fa-3x" style="color: #667eea;"></i>
+                <h4 class="mt-3">اضغط هنا لاختيار الصور</h4>
+                <p class="text-muted">أو اسحب وأفلت الصور هنا</p>
+                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;" onchange="handleFiles(this.files)">
+            </div>
 
-        <!-- Folders Container -->
-        <div id="foldersContainer"></div>
+            <!-- Folders Container -->
+            <div id="foldersContainer"></div>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="text-center text-white py-5" style="display: none;">
-            <i class="fas fa-images fa-5x mb-4 opacity-50"></i>
-            <h3>لا توجد صور بعد</h3>
-            <p>قم برفع صورك لتبدأ في إنشاء ألبومك الخاص</p>
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-images"></i>
+                <h3>لا توجد صور بعد</h3>
+                <p>قم برفع صورك لتبدأ في إنشاء ألبومك الخاص</p>
+            </div>
         </div>
     </div>
 
@@ -145,34 +485,210 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ================ نظام المستخدمين ================
+        let currentUser = null;
+        let users = [];
         let photos = [];
         let modalInstance = null;
         let currentImageSrc = '';
 
-        // Initialize - Load photos from IndexedDB
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromIndexedDB();
-            modalInstance = new bootstrap.Modal(document.getElementById('imageModal'));
-        });
+        // تحميل المستخدمين من localStorage
+        function loadUsers() {
+            const stored = localStorage.getItem('gallery_users');
+            users = stored ? JSON.parse(stored) : [];
+        }
 
-        // Handle drag and drop
-        document.addEventListener('dragover', (e) => e.preventDefault());
-        document.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (e.dataTransfer.files) {
-                handleFiles(e.dataTransfer.files);
+        // حفظ المستخدمين في localStorage
+        function saveUsers() {
+            localStorage.setItem('gallery_users', JSON.stringify(users));
+        }
+
+        // التبديل بين تبويبات تسجيل الدخول وإنشاء حساب
+        function switchTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('loginTab').classList.add('active');
+                document.getElementById('registerTab').classList.remove('active');
+                document.getElementById('loginForm').classList.add('active');
+                document.getElementById('registerForm').classList.remove('active');
+            } else {
+                document.getElementById('loginTab').classList.remove('active');
+                document.getElementById('registerTab').classList.add('active');
+                document.getElementById('loginForm').classList.remove('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // معالجة تسجيل الدخول
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            loadUsers();
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('current_user', JSON.stringify(user));
+                
+                // إخفاء شاشة تسجيل الدخول وإظهار التطبيق
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // عرض معلومات المستخدم
+                document.getElementById('displayName').textContent = user.name;
+                document.getElementById('displayEmail').textContent = user.email;
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+                
+                // تحميل صور المستخدم
+                loadUserPhotos();
+                
+                showMessage('تم تسجيل الدخول بنجاح', 'success');
+            } else {
+                showMessage('البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
+            }
+        }
+
+        // معالجة إنشاء حساب جديد
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            // التحقق من كلمة المرور
+            if (password !== confirm) {
+                showMessage('كلمة المرور غير متطابقة', 'error');
+                return;
+            }
+            
+            loadUsers();
+            
+            // التحقق من عدم وجود البريد الإلكتروني مسبقاً
+            if (users.some(u => u.email === email)) {
+                showMessage('البريد الإلكتروني مستخدم بالفعل', 'error');
+                return;
+            }
+            
+            // إنشاء المستخدم الجديد
+            const newUser = {
+                id: Date.now().toString(),
+                name: name,
+                email: email,
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            saveUsers();
+            
+            showMessage('تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن', 'success');
+            switchTab('login');
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('current_user');
+            
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            
+            // مسح البيانات
+            photos = [];
+            document.getElementById('foldersContainer').innerHTML = '';
+            
+            showMessage('تم تسجيل الخروج بنجاح', 'info');
+        }
+
+        // التحقق من الجلسة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            modalInstance = new bootstrap.Modal(document.getElementById('imageModal'));
+            
+            const savedUser = localStorage.getItem('current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('displayName').textContent = currentUser.name;
+                document.getElementById('displayEmail').textContent = currentUser.email;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                loadUserPhotos();
             }
         });
 
-        // Handle file selection
+        // ================ نظام إدارة الصور ================
+        
+        // تحميل صور المستخدم
+        async function loadUserPhotos() {
+            if (!currentUser) return;
+            
+            const db = await openDB();
+            const tx = db.transaction('photos', 'readonly');
+            const store = tx.objectStore('photos');
+            const allPhotos = await store.getAll();
+            
+            // فلترة صور المستخدم الحالي
+            photos = allPhotos.filter(p => p.userId === currentUser.id);
+            displayPhotos();
+        }
+
+        // حفظ الصور في IndexedDB
+        async function saveToIndexedDB() {
+            if (!currentUser) return;
+            
+            const db = await openDB();
+            const tx = db.transaction('photos', 'readwrite');
+            const store = tx.objectStore('photos');
+            
+            // حذف كل صور المستخدم الحالي
+            const allPhotos = await store.getAll();
+            const userPhotos = allPhotos.filter(p => p.userId === currentUser.id);
+            for (let photo of userPhotos) {
+                await store.delete(photo.id);
+            }
+            
+            // إضافة الصور الجديدة
+            for (let photo of photos) {
+                await store.add(photo);
+            }
+            await tx.done;
+        }
+
+        // فتح قاعدة البيانات
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('PhotoGalleryDB', 2);
+                
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('photos')) {
+                        db.createObjectStore('photos', { keyPath: 'id' });
+                    }
+                };
+                
+                request.onsuccess = (e) => resolve(e.target.result);
+                request.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        // معالجة رفع الملفات
         async function handleFiles(files) {
+            if (!currentUser) return;
+            
             for (let file of files) {
                 if (!file.type.startsWith('image/')) continue;
                 
                 const reader = new FileReader();
                 reader.onload = async (e) => {
                     const photo = {
-                        id: Date.now() + Math.random(),
+                        id: `${currentUser.id}_${Date.now()}_${Math.random()}`,
+                        userId: currentUser.id,
                         name: file.name,
                         data: e.target.result,
                         date: new Date().toISOString(),
@@ -187,47 +703,7 @@
             }
         }
 
-        // Save to IndexedDB
-        async function saveToIndexedDB() {
-            const db = await openDB();
-            const tx = db.transaction('photos', 'readwrite');
-            const store = tx.objectStore('photos');
-            
-            // Clear and add all photos
-            await store.clear();
-            for (let photo of photos) {
-                await store.add(photo);
-            }
-            await tx.done;
-        }
-
-        // Load from IndexedDB
-        async function loadFromIndexedDB() {
-            const db = await openDB();
-            const tx = db.transaction('photos', 'readonly');
-            const store = tx.objectStore('photos');
-            photos = await store.getAll();
-            displayPhotos();
-        }
-
-        // Open IndexedDB connection
-        function openDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('PhotoGallery', 1);
-                
-                request.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains('photos')) {
-                        db.createObjectStore('photos', { keyPath: 'id' });
-                    }
-                };
-                
-                request.onsuccess = (e) => resolve(e.target.result);
-                request.onerror = (e) => reject(e.target.error);
-            });
-        }
-
-        // Display photos
+        // عرض الصور
         function displayPhotos() {
             const container = document.getElementById('foldersContainer');
             const emptyState = document.getElementById('emptyState');
@@ -243,7 +719,7 @@
             
             emptyState.style.display = 'none';
             
-            // Group by date
+            // تجميع حسب التاريخ
             const groups = groupByDate(photos);
             container.innerHTML = '';
             
@@ -266,7 +742,7 @@
                     col.className = 'col-lg-3 col-md-4 col-sm-6';
                     col.innerHTML = `
                         <div class="gallery-card" onclick="openPhotoModal('${photo.data}', '${photo.name}')">
-                            <img src="${photo.data}" alt="${photo.name}">
+                            <img src="${photo.data}" alt="${photo.name}" loading="lazy">
                             <div class="card-footer">
                                 ${photo.name.length > 20 ? photo.name.substring(0,20)+'...' : photo.name}
                             </div>
@@ -280,7 +756,7 @@
             }
         }
 
-        // Group photos by date
+        // تجميع الصور حسب التاريخ
         function groupByDate(photos) {
             const groups = {};
             photos.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -299,19 +775,20 @@
             return groups;
         }
 
-        // Delete photo
+        // حذف صورة
         async function deletePhoto(id, event) {
             event.stopPropagation();
             if (!confirm('هل أنت متأكد من حذف هذه الصورة؟')) return;
             
-            photos = photos.filter(p => p.id != id);
+            photos = photos.filter(p => p.id !== id);
             await saveToIndexedDB();
             displayPhotos();
             showMessage('تم حذف الصورة بنجاح', 'success');
         }
 
-        // Clear all photos
+        // مسح كل الصور
         async function clearAllPhotos() {
+            if (!currentUser) return;
             if (!confirm('هل أنت متأكد من حذف جميع الصور؟')) return;
             
             photos = [];
@@ -320,7 +797,7 @@
             showMessage('تم حذف جميع الصور', 'success');
         }
 
-        // Open photo modal
+        // فتح الصورة في نافذة منبثقة
         function openPhotoModal(src, name) {
             document.getElementById('modalTitle').textContent = name;
             document.getElementById('modalImage').src = src;
@@ -328,7 +805,7 @@
             modalInstance.show();
         }
 
-        // Download image
+        // تحميل الصورة
         function downloadImage() {
             const link = document.createElement('a');
             link.href = currentImageSrc;
@@ -336,15 +813,30 @@
             link.click();
         }
 
-        // Show message
+        // عرض رسالة
         function showMessage(text, type) {
             const toast = document.createElement('div');
-            toast.className = `alert alert-${type} position-fixed top-0 start-50 translate-middle-x mt-4`;
-            toast.style.zIndex = '9999';
-            toast.textContent = text;
+            toast.className = `alert-message alert-${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
+                ${text}
+            `;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
+
+        // السحب والإفلات
+        document.addEventListener('dragover', (e) => e.preventDefault());
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files && currentUser) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
     </script>
 </body>
 </html>
