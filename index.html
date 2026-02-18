@@ -3,57 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صور Google - مزامنة سحابية كاملة</title>
+    <title>صور Google - التطبيق الكامل</title>
     
     <!-- Bootstrap & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- Google Identity Services (مهم جداً) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <style>
-        /* الأنماط السابقة + أنماط جديدة للمزامنة */
-        
-        /* شاشة تسجيل الدخول */
-        .login-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        /* أنماط سريعة للتجربة */
+        body {
             background: linear-gradient(135deg, #1a73e8, #34a853);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
         }
         
         .login-card {
             background: white;
             border-radius: 28px;
-            padding: 48px 40px;
-            max-width: 480px;
-            width: 90%;
-            text-align: center;
+            padding: 40px;
+            max-width: 400px;
+            margin: 100px auto;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.5s ease;
-        }
-        
-        .login-logo {
-            font-size: 64px;
-            color: #1a73e8;
-            margin-bottom: 24px;
-        }
-        
-        .login-title {
-            font-size: 32px;
-            font-weight: 400;
-            color: #202124;
-            margin-bottom: 8px;
-        }
-        
-        .login-subtitle {
-            color: #5f6368;
-            margin-bottom: 32px;
-            font-size: 15px;
         }
         
         .google-btn {
@@ -62,945 +35,125 @@
             justify-content: center;
             gap: 12px;
             width: 100%;
-            padding: 12px 24px;
-            background: white;
-            border: 1px solid #dadce0;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 500;
-            color: #3c4043;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 16px;
-        }
-        
-        .google-btn:hover {
-            background: #f8f9fa;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .google-btn img {
-            width: 24px;
-            height: 24px;
-        }
-        
-        .icloud-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 12px 24px;
-            background: #000;
-            border: none;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: 500;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .icloud-btn:hover {
-            background: #1a1a1a;
-        }
-        
-        .login-divider {
-            position: relative;
-            margin: 24px 0;
-            text-align: center;
-        }
-        
-        .login-divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #dadce0;
-        }
-        
-        .login-divider span {
-            position: relative;
-            background: white;
-            padding: 0 16px;
-            color: #5f6368;
-            font-size: 14px;
-        }
-        
-        /* شريط حالة المزامنة */
-        .sync-status {
-            background: #e8f0fe;
-            border-radius: 40px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
-            color: #1a73e8;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .sync-status:hover {
-            background: #d2e3fc;
-        }
-        
-        .sync-status i {
-            font-size: 16px;
-        }
-        
-        .sync-status.syncing i {
-            animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        /* نافذة المزامنة */
-        .sync-modal .modal-content {
-            border-radius: 28px;
-            overflow: hidden;
-        }
-        
-        .sync-header {
-            background: linear-gradient(135deg, #1a73e8, #34a853);
-            color: white;
-            padding: 32px;
-            text-align: center;
-        }
-        
-        .sync-header i {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-        
-        .sync-stats {
-            padding: 24px;
-            background: #f8f9fa;
-        }
-        
-        .sync-stat-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
             padding: 12px;
             background: white;
-            border-radius: 16px;
-            margin-bottom: 8px;
-        }
-        
-        .sync-stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #e8f0fe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1a73e8;
-            font-size: 20px;
-        }
-        
-        .sync-stat-info {
-            flex: 1;
-        }
-        
-        .sync-stat-label {
-            font-size: 14px;
-            color: #5f6368;
-        }
-        
-        .sync-stat-value {
-            font-weight: 500;
+            border: 1px solid #ddd;
+            border-radius: 40px;
             font-size: 16px;
-        }
-        
-        .sync-progress {
-            height: 4px;
-            background: #dadce0;
-            border-radius: 2px;
-            margin: 16px 0;
-            overflow: hidden;
-        }
-        
-        .sync-progress-bar {
-            height: 100%;
-            background: #1a73e8;
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .sync-time {
-            font-size: 12px;
-            color: #5f6368;
-            text-align: center;
-            margin-top: 16px;
-        }
-        
-        /* زر المزامنة السريعة */
-        .quick-sync {
-            position: fixed;
-            bottom: 100px;
-            left: 24px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #1a73e8;
-            color: white;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
             cursor: pointer;
-            transition: all 0.2s;
-            z-index: 998;
+            margin: 20px 0;
         }
         
-        .quick-sync:hover {
-            transform: scale(1.1);
-            background: #1557b0;
-        }
-        
-        .quick-sync.syncing {
-            animation: pulse 1s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        /* علامة النسخ الاحتياطي */
-        .backup-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            background: #e6f4ea;
-            color: #34a853;
-            border-radius: 16px;
-            font-size: 11px;
-        }
-        
-        /* شاشة الاستعادة */
-        .restore-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 11000;
-            backdrop-filter: blur(5px);
-        }
-        
-        .restore-card {
+        .user-info {
             background: white;
-            border-radius: 28px;
-            padding: 40px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-        }
-        
-        .restore-icon {
-            font-size: 64px;
-            color: #1a73e8;
-            margin-bottom: 24px;
-            animation: cloudFloat 2s infinite;
-        }
-        
-        @keyframes cloudFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .restore-title {
-            font-size: 24px;
-            font-weight: 500;
-            margin-bottom: 16px;
-        }
-        
-        .restore-text {
-            color: #5f6368;
-            margin-bottom: 24px;
-        }
-        
-        .restore-progress {
-            height: 6px;
-            background: #f1f3f4;
-            border-radius: 3px;
-            margin: 24px 0;
-            overflow: hidden;
-        }
-        
-        .restore-progress-bar {
-            height: 100%;
-            background: #1a73e8;
-            width: 0%;
-            transition: width 0.3s;
-        }
-        
-        .restore-stats {
-            display: flex;
-            justify-content: space-between;
-            color: #5f6368;
-            font-size: 14px;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px;
         }
     </style>
 </head>
 <body>
     <!-- شاشة تسجيل الدخول -->
-    <div class="login-screen" id="loginScreen">
+    <div id="loginScreen">
         <div class="login-card">
-            <i class="fas fa-cloud-upload-alt login-logo"></i>
-            <h1 class="login-title">مرحباً بك في صور Google</h1>
-            <p class="login-subtitle">سجل الدخول لمزامنة صورك واستعادتها في أي وقت</p>
+            <h2 class="text-center mb-4">📸 صور Google</h2>
+            <p class="text-center text-muted mb-4">سجل دخولك لمزامنة الصور</p>
             
-            <button class="google-btn" onclick="loginWithGoogle()">
-                <img src="https://www.google.com/favicon.ico" alt="Google">
-                المتابعة بحساب Google
-            </button>
-            
-            <div class="login-divider">
-                <span>أو</span>
+            <!-- زر Google الرسمي -->
+            <div id="g_id_onload"
+                 data-client_id="919384082772-uoofli82smlvhc2oeiu2uctnrc7iumg2.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
             </div>
             
-            <button class="icloud-btn" onclick="loginWithApple()">
-                <i class="fab fa-apple"></i>
-                المتابعة مع Apple
-            </button>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left">
+            </div>
             
-            <p class="mt-4 text-muted small">
-                بالتسجيل، أنت توافق على شروط الخدمة وسياسة الخصوصية
-            </p>
+            <div class="google-btn" onclick="document.querySelector('.g_id_signin').click()">
+                <img src="https://www.google.com/favicon.ico" width="20">
+                <span>تسجيل الدخول بحساب Google</span>
+            </div>
         </div>
     </div>
-
-    <!-- التطبيق الرئيسي -->
+    
+    <!-- التطبيق الرئيسي (مخفي في البداية) -->
     <div id="mainApp" style="display: none;">
-        <!-- شريط التنقل مع حالة المزامنة -->
-        <nav class="navbar">
-            <div class="container-fluid">
-                <div class="d-flex align-items-center" style="gap: 24px;">
-                    <a class="navbar-brand" href="#">
-                        <i class="fas fa-photo-video"></i>
-                        صوري
-                    </a>
-                    
-                    <div class="search-container">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="ابحث في صورك" id="searchInput" onkeyup="searchPhotos()">
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center" style="gap: 16px;">
-                    <!-- حالة المزامنة -->
-                    <div class="sync-status" id="syncStatus" onclick="showSyncModal()">
-                        <i class="fas fa-cloud"></i>
-                        <span id="syncText">مزامن مع Google</span>
-                    </div>
-                    
-                    <i class="fas fa-bell" style="color: var(--secondary); cursor: pointer;"></i>
-                    <i class="fas fa-cog" style="color: var(--secondary); cursor: pointer;" onclick="openSettings()"></i>
-                    <div class="user-avatar" id="userAvatar" onclick="showUserMenu()">
-                        <img id="userAvatarImg" src="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: none;">
-                        <span id="userAvatarText">ض</span>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <!-- شريط التبويبات -->
-        <div class="tabs-container">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('photos', this)">
-                    <i class="fas fa-th"></i>
-                    الصور
-                </div>
-                <div class="tab" onclick="switchTab('albums', this)">
-                    <i class="fas fa-folder"></i>
-                    الألبومات
-                </div>
-                <div class="tab" onclick="switchTab('favorites', this)">
-                    <i class="fas fa-star"></i>
-                    المفضلة
-                </div>
-                <div class="tab" onclick="switchTab('shared', this)">
-                    <i class="fas fa-share-alt"></i>
-                    مشاركاتي
-                </div>
-            </div>
-        </div>
-
-        <!-- زر المزامنة السريعة -->
-        <button class="quick-sync" id="quickSync" onclick="quickSync()">
-            <i class="fas fa-cloud-upload-alt"></i>
-        </button>
-
-        <!-- المحتوى الرئيسي -->
-        <div class="main-content" id="mainContent"></div>
-    </div>
-
-    <!-- نافذة المزامنة -->
-    <div class="modal fade sync-modal" id="syncModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="sync-header">
-                    <i class="fas fa-cloud"></i>
-                    <h4>المزامنة السحابية</h4>
-                    <p class="mb-0">آخر مزامنة: <span id="lastSyncTime">منذ 5 دقائق</span></p>
-                </div>
-                
-                <div class="sync-stats">
-                    <div class="sync-stat-item">
-                        <div class="sync-stat-icon">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <div class="sync-stat-info">
-                            <div class="sync-stat-label">إجمالي الصور</div>
-                            <div class="sync-stat-value" id="totalPhotosSync">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="sync-stat-item">
-                        <div class="sync-stat-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <div class="sync-stat-info">
-                            <div class="sync-stat-label">تمت مزامنتها</div>
-                            <div class="sync-stat-value" id="syncedPhotos">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="sync-stat-item">
-                        <div class="sync-stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="sync-stat-info">
-                            <div class="sync-stat-label">المساحة المستخدمة</div>
-                            <div class="sync-stat-value" id="usedStorage">0 MB</div>
-                        </div>
-                    </div>
-                    
-                    <div class="sync-progress">
-                        <div class="sync-progress-bar" id="syncProgressBar"></div>
-                    </div>
-                    
-                    <div class="sync-time" id="nextSync">
-                        المزامنة التالية: بعد 30 دقيقة
-                    </div>
-                    
-                    <button class="btn btn-primary w-100 mt-3" onclick="startSync()">
-                        <i class="fas fa-sync-alt me-2"></i>
-                        مزامنة الآن
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة الاستعادة -->
-    <div class="restore-screen" id="restoreScreen" style="display: none;">
-        <div class="restore-card">
-            <i class="fas fa-cloud-download-alt restore-icon"></i>
-            <h3 class="restore-title">جاري استعادة صورك</h3>
-            <p class="restore-text">نقوم باستعادة صورك من السحابة، قد يستغرق هذا بضع دقائق</p>
-            
-            <div class="restore-progress">
-                <div class="restore-progress-bar" id="restoreProgress"></div>
-            </div>
-            
-            <div class="restore-stats">
-                <span id="restoredCount">0</span>
-                <span>من</span>
-                <span id="totalRestore">100</span>
-            </div>
-            
-            <p class="text-muted small mt-3">
-                لا تغلق هذه النافذة حتى اكتمال الاستعادة
-            </p>
+        <div class="user-info" id="userInfo">
+            <h3>مرحباً! <span id="userName"></span></h3>
+            <p>البريد: <span id="userEmail"></span></p>
+            <img id="userPicture" src="" style="width: 50px; height: 50px; border-radius: 50%;">
+            <button class="btn btn-danger mt-3" onclick="logout()">تسجيل خروج</button>
         </div>
     </div>
 
     <script>
-        // ================ متغيرات المزامنة ================
-        let currentUser = null;
-        let accessToken = null;
-        let syncEnabled = false;
-        let lastSync = null;
-        let syncInterval = null;
-        let isSyncing = false;
+        // ================ Client ID الصحيح ================
+        const CLIENT_ID = '919384082772-uoofli82smlvhc2oeiu2uctnrc7iumg2.apps.googleusercontent.com';
         
-        // معرفات Google API
-        const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // ضع Client ID الخاص بك
-        const API_KEY = 'YOUR_API_KEY'; // ضع API Key الخاص بك
-        
-        // ================ تسجيل الدخول ================
-        async function loginWithGoogle() {
-            showToast('جاري الاتصال بحساب Google...', 'info');
+        // ================ معالجة تسجيل الدخول ================
+        function handleCredentialResponse(response) {
+            console.log('تم تسجيل الدخول بنجاح!', response);
             
-            try {
-                // محاكاة تسجيل الدخول (في التطبيق الحقيقي استخدم Google OAuth)
-                setTimeout(async () => {
-                    currentUser = {
-                        id: 'user_123',
-                        name: 'أحمد محمد',
-                        email: 'ahmed@gmail.com',
-                        picture: 'https://via.placeholder.com/100',
-                        provider: 'google'
-                    };
-                    
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('mainApp').style.display = 'block';
-                    
-                    // تحديث واجهة المستخدم
-                    document.getElementById('userAvatarText').style.display = 'none';
-                    document.getElementById('userAvatarImg').style.display = 'block';
-                    document.getElementById('userAvatarImg').src = currentUser.picture;
-                    
-                    // بدء المزامنة
-                    enableSync();
-                    
-                    // التحقق من وجود صور قديمة في السحابة
-                    checkForCloudPhotos();
-                    
-                    showToast('تم تسجيل الدخول بنجاح', 'success');
-                }, 1500);
-                
-            } catch (error) {
-                showToast('فشل تسجيل الدخول', 'error');
-            }
+            // فك تشفير البيانات
+            const data = parseJwt(response.credential);
+            
+            // عرض بيانات المستخدم
+            document.getElementById('userName').textContent = data.name;
+            document.getElementById('userEmail').textContent = data.email;
+            document.getElementById('userPicture').src = data.picture;
+            
+            // إخفاء شاشة تسجيل الدخول وإظهار التطبيق
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            
+            // حفظ بيانات المستخدم
+            localStorage.setItem('user', JSON.stringify(data));
+            
+            alert(`مرحباً ${data.name}! تم تسجيل الدخول بنجاح`);
         }
         
-        function loginWithApple() {
-            showToast('جاري الاتصال بحساب Apple...', 'info');
-            
-            setTimeout(() => {
-                currentUser = {
-                    id: 'user_456',
-                    name: 'خالد علي',
-                    email: 'khalid@icloud.com',
-                    picture: null,
-                    provider: 'apple'
-                };
-                
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                
-                document.getElementById('userAvatarImg').style.display = 'none';
-                document.getElementById('userAvatarText').style.display = 'block';
-                document.getElementById('userAvatarText').textContent = currentUser.name.charAt(0);
-                
-                enableSync();
-                checkForCloudPhotos();
-                
-                showToast('تم تسجيل الدخول بنجاح', 'success');
-            }, 1500);
-        }
-        
-        // ================ تفعيل المزامنة ================
-        function enableSync() {
-            syncEnabled = true;
-            
-            // تحميل آخر مزامنة
-            lastSync = localStorage.getItem(`lastSync_${currentUser.id}`);
-            if (lastSync) {
-                document.getElementById('syncText').textContent = 'آخر مزامنة: ' + timeAgo(lastSync);
-            }
-            
-            // بدء المزامنة الدورية (كل 30 دقيقة)
-            syncInterval = setInterval(() => {
-                if (!isSyncing) {
-                    autoSync();
-                }
-            }, 30 * 60 * 1000);
-            
-            // مزامنة فورية بعد تسجيل الدخول
-            setTimeout(() => {
-                startSync();
-            }, 2000);
-        }
-        
-        // ================ المزامنة التلقائية ================
-        async function autoSync() {
-            if (!syncEnabled || !currentUser) return;
-            
-            console.log('جاري المزامنة التلقائية...');
-            await syncPhotos();
-        }
-        
-        // ================ بدء المزامنة ================
-        async function startSync() {
-            if (!currentUser) {
-                showToast('الرجاء تسجيل الدخول أولاً', 'error');
-                return;
-            }
-            
-            if (isSyncing) {
-                showToast('جاري المزامنة بالفعل', 'info');
-                return;
-            }
-            
-            await syncPhotos();
-        }
-        
-        // ================ مزامنة الصور ================
-        async function syncPhotos() {
-            isSyncing = true;
-            
-            // تحديث واجهة المستخدم
-            document.getElementById('syncStatus').classList.add('syncing');
-            document.getElementById('quickSync').classList.add('syncing');
-            document.getElementById('syncText').textContent = 'جاري المزامنة...';
-            
-            showToast('جاري مزامنة الصور مع السحابة...', 'info');
-            
-            try {
-                // محاكاة رفع الصور إلى السحابة
-                let synced = 0;
-                const total = photos.length;
-                
-                for (let i = 0; i < total; i++) {
-                    // محاكاة رفع كل صورة
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    synced++;
-                    
-                    // تحديث التقدم
-                    const progress = (synced / total) * 100;
-                    document.getElementById('syncProgressBar').style.width = progress + '%';
-                }
-                
-                // حفظ في localStorage
-                const syncData = {
-                    userId: currentUser.id,
-                    photos: photos,
-                    timestamp: new Date().toISOString()
-                };
-                
-                localStorage.setItem(`cloud_backup_${currentUser.id}`, JSON.stringify(syncData));
-                
-                // تحديث آخر مزامنة
-                lastSync = new Date().toISOString();
-                localStorage.setItem(`lastSync_${currentUser.id}`, lastSync);
-                
-                // تحديث واجهة المستخدم
-                document.getElementById('syncText').textContent = 'آخر مزامنة: الآن';
-                document.getElementById('lastSyncTime').textContent = 'الآن';
-                document.getElementById('syncedPhotos').textContent = photos.length;
-                
-                showToast('تمت المزامنة بنجاح', 'success');
-                
-            } catch (error) {
-                showToast('فشلت المزامنة', 'error');
-            } finally {
-                isSyncing = false;
-                document.getElementById('syncStatus').classList.remove('syncing');
-                document.getElementById('quickSync').classList.remove('syncing');
-            }
-        }
-        
-        // ================ مزامنة سريعة ================
-        function quickSync() {
-            if (!currentUser) {
-                showToast('الرجاء تسجيل الدخول أولاً', 'error');
-                return;
-            }
-            
-            startSync();
-        }
-        
-        // ================ التحقق من الصور في السحابة ================
-        async function checkForCloudPhotos() {
-            if (!currentUser) return;
-            
-            // البحث عن نسخة احتياطية قديمة
-            const backup = localStorage.getItem(`cloud_backup_${currentUser.id}`);
-            
-            if (backup) {
-                const data = JSON.parse(backup);
-                const backupTime = new Date(data.timestamp);
-                const now = new Date();
-                const diffHours = Math.abs(now - backupTime) / 36e5;
-                
-                // إذا كان هناك نسخة احتياطية أقدم من ساعة
-                if (diffHours > 1) {
-                    showRestoreDialog(data);
-                } else {
-                    // استعادة الصور مباشرة
-                    photos = data.photos;
-                    saveData();
-                    updateDisplay();
-                }
-            } else {
-                // لا توجد نسخة احتياطية
-                showToast('مرحباً بك! لم نجد صوراً سابقة في السحابة', 'info');
-            }
-        }
-        
-        // ================ عرض نافذة الاستعادة ================
-        function showRestoreDialog(backupData) {
-            const confirmRestore = confirm(`تم العثور على ${backupData.photos.length} صورة من آخر نسخة احتياطية (${timeAgo(backupData.timestamp)}). هل تريد استعادتها؟`);
-            
-            if (confirmRestore) {
-                restoreFromCloud(backupData);
-            }
-        }
-        
-        // ================ الاستعادة من السحابة ================
-        async function restoreFromCloud(backupData) {
-            // إظهار شاشة الاستعادة
-            document.getElementById('restoreScreen').style.display = 'flex';
-            document.getElementById('totalRestore').textContent = backupData.photos.length;
-            
-            let restored = 0;
-            const total = backupData.photos.length;
-            
-            for (let i = 0; i < total; i++) {
-                await new Promise(resolve => setTimeout(resolve, 50));
-                restored++;
-                
-                const progress = (restored / total) * 100;
-                document.getElementById('restoreProgress').style.width = progress + '%';
-                document.getElementById('restoredCount').textContent = restored;
-            }
-            
-            // استعادة الصور
-            photos = backupData.photos;
-            saveData();
-            updateDisplay();
-            
-            // إخفاء شاشة الاستعادة
-            setTimeout(() => {
-                document.getElementById('restoreScreen').style.display = 'none';
-                showToast(`تم استعادة ${photos.length} صورة بنجاح`, 'success');
-            }, 1000);
-        }
-        
-        // ================ عرض نافذة المزامنة ================
-        function showSyncModal() {
-            if (!currentUser) {
-                showToast('الرجاء تسجيل الدخول أولاً', 'error');
-                return;
-            }
-            
-            // تحديث الإحصائيات
-            document.getElementById('totalPhotosSync').textContent = photos.length;
-            document.getElementById('syncedPhotos').textContent = photos.length;
-            
-            // حساب المساحة المستخدمة (تقديرية)
-            const totalSize = photos.reduce((acc, photo) => acc + (photo.size || 500000), 0);
-            document.getElementById('usedStorage').textContent = (totalSize / 1024 / 1024).toFixed(2) + ' MB';
-            
-            // عرض آخر مزامنة
-            if (lastSync) {
-                document.getElementById('lastSyncTime').textContent = timeAgo(lastSync);
-            }
-            
-            const syncModal = new bootstrap.Modal(document.getElementById('syncModal'));
-            syncModal.show();
-        }
-        
-        // ================ وظائف مساعدة ================
-        function timeAgo(timestamp) {
-            const now = new Date();
-            const past = new Date(timestamp);
-            const diffMs = now - past;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 1) return 'الآن';
-            if (diffMins < 60) return `منذ ${diffMins} دقيقة`;
-            if (diffHours < 24) return `منذ ${diffHours} ساعة`;
-            return `منذ ${diffDays} يوم`;
-        }
-        
-        // ================ حفظ البيانات مع المزامنة ================
-        async function saveData() {
-            localStorage.setItem('google_photos', JSON.stringify(photos));
-            
-            // إذا كان المستخدم مسجل دخول، قم بالمزامنة التلقائية
-            if (currentUser && syncEnabled && !isSyncing) {
-                // تأخير المزامنة قليلاً
-                setTimeout(() => {
-                    autoSync();
-                }, 5000);
-            }
-        }
-        
-        // ================ رفع الصور مع المزامنة ================
-        function handleUpload(files) {
-            if (!files || files.length === 0) return;
-            
-            showToast(`جاري رفع ${files.length} صورة...`, 'info');
-            
-            Array.from(files).forEach(file => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const newPhoto = {
-                            id: 'photo_' + Date.now() + '_' + Math.random(),
-                            name: file.name,
-                            url: e.target.result,
-                            date: new Date().toISOString().split('T')[0],
-                            size: file.size,
-                            favorite: false,
-                            synced: false
-                        };
-                        
-                        photos.push(newPhoto);
-                        saveData();
-                        updateDisplay();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            
-            // إشعار بالرفع
-            setTimeout(() => {
-                showToast('تم رفع الصور وسيتم مزامنتها قريباً', 'success');
-            }, 1000);
-        }
-        
-        // ================ حذف صورة مع تحديث السحابة ================
-        async function deletePhoto(id, event) {
-            event.stopPropagation();
-            
-            if (!confirm('هل تريد نقل هذه الصورة إلى المهملات؟')) return;
-            
-            photos = photos.filter(p => p.id !== id);
-            await saveData();
-            updateDisplay();
-            
-            // مزامنة فورية بعد الحذف
-            if (currentUser) {
-                setTimeout(() => autoSync(), 2000);
-            }
-            
-            showToast('تم نقل الصورة إلى المهملات', 'success');
+        // ================ فك تشفير JWT Token ================
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
         }
         
         // ================ تسجيل الخروج ================
         function logout() {
-            if (syncInterval) {
-                clearInterval(syncInterval);
-            }
+            // مسح بيانات المستخدم
+            localStorage.removeItem('user');
             
-            currentUser = null;
-            syncEnabled = false;
-            
+            // إخفاء التطبيق وإظهار شاشة تسجيل الدخول
             document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginScreen').style.display = 'block';
             
-            showToast('تم تسجيل الخروج بنجاح', 'success');
+            alert('تم تسجيل الخروج');
         }
         
-        // ================ قائمة المستخدم ================
-        function showUserMenu() {
-            const menu = document.createElement('div');
-            menu.className = 'position-absolute bg-white shadow-lg rounded-3 p-2';
-            menu.style.top = '70px';
-            menu.style.left = '20px';
-            menu.style.minWidth = '200px';
-            menu.style.zIndex = '1000';
-            
-            menu.innerHTML = `
-                <div class="p-3 border-bottom">
-                    <div class="fw-bold">${currentUser?.name}</div>
-                    <div class="small text-muted">${currentUser?.email}</div>
-                </div>
-                <div class="p-2">
-                    <div class="dropdown-item p-2" onclick="showSyncModal()">
-                        <i class="fas fa-cloud me-2"></i> حالة المزامنة
-                    </div>
-                    <div class="dropdown-item p-2" onclick="showBackups()">
-                        <i class="fas fa-history me-2"></i> النسخ الاحتياطية
-                    </div>
-                    <div class="dropdown-item p-2" onclick="showStorage()">
-                        <i class="fas fa-database me-2"></i> مساحة التخزين
-                    </div>
-                    <div class="dropdown-item p-2 text-danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt me-2"></i> تسجيل الخروج
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(menu);
-            
-            setTimeout(() => {
-                document.addEventListener('click', function hideMenu() {
-                    menu.remove();
-                    document.removeEventListener('click', hideMenu);
-                }, { once: true });
-            }, 100);
-        }
-        
-        // ================ عرض النسخ الاحتياطية ================
-        function showBackups() {
-            const backups = [];
-            
-            // البحث عن كل النسخ الاحتياطية لهذا المستخدم
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith(`cloud_backup_${currentUser.id}`)) {
-                    const data = JSON.parse(localStorage.getItem(key));
-                    backups.push(data);
-                }
-            }
-            
-            if (backups.length === 0) {
-                showToast('لا توجد نسخ احتياطية سابقة', 'info');
-                return;
-            }
-            
-            // عرض النسخ في نافذة منبثقة
-            let message = 'النسخ الاحتياطية المتاحة:\n\n';
-            backups.forEach((backup, index) => {
-                message += `${index + 1}. ${new Date(backup.timestamp).toLocaleString('ar-SA')} - ${backup.photos.length} صورة\n`;
-            });
-            
-            alert(message);
-        }
-        
-        // ================ عرض مساحة التخزين ================
-        function showStorage() {
-            const totalSize = photos.reduce((acc, photo) => acc + (photo.size || 500000), 0);
-            const sizeInMB = (totalSize / 1024 / 1024).toFixed(2);
-            
-            alert(`المساحة المستخدمة: ${sizeInMB} MB\nعدد الصور: ${photos.length}`);
-        }
-        
-        // ================ تهيئة التطبيق ================
+        // ================ التحقق من وجود مستخدم سابق ================
         document.addEventListener('DOMContentLoaded', () => {
-            // التحقق من وجود مستخدم سابق
-            if (localStorage.getItem('lastUser')) {
-                // محاولة تسجيل الدخول التلقائي
-                setTimeout(() => {
-                    loginWithGoogle();
-                }, 1000);
-            }
-            
-            // تحميل الصور المحفوظة
-            const saved = localStorage.getItem('google_photos');
-            if (saved) {
-                photos = JSON.parse(saved);
+            const savedUser = localStorage.getItem('user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userPicture').src = user.picture;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
             }
         });
-        
-        // ================ دوال أخرى (من الكود السابق) ================
-        // ... (نفس الدوال السابقة مع تعديل saveData لاستدعاء المزامنة)
-        
     </script>
 </body>
 </html>
